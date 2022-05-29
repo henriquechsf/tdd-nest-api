@@ -40,7 +40,13 @@ describe('ExchangeService', () => {
 
     it('should be called getCurrency twice', async () => {
       await service.convertAmout({ from: 'USD', to: 'BRL', amount: 1 });
-      expect(await currenciesService.getCurrency).toBeCalledTimes(2);
+      expect(currenciesService.getCurrency).toBeCalledTimes(2);
+    });
+
+    it('should be called getCurrency with correct params', async () => {
+      await service.convertAmout({ from: 'USD', to: 'BRL', amount: 1 });
+      expect(currenciesService.getCurrency).toBeCalledWith('USD');
+      expect(currenciesService.getCurrency).toHaveBeenLastCalledWith('BRL');
     });
   });
 });
