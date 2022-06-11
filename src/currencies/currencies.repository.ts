@@ -1,4 +1,8 @@
-import { NotFoundException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { validateOrReject } from 'class-validator';
 import { EntityRepository, Repository } from 'typeorm';
 import { Currencies } from './currencies.entity';
 import { CurrenciesInputType } from './types/currencies-input.type';
@@ -15,11 +19,21 @@ export class CurrenciesRepository extends Repository<Currencies> {
     return result;
   }
 
-  async createCurrency({
-    currency,
-    value,
-  }: CurrenciesInputType): Promise<Currencies> {
-    return new Currencies();
+  async createCurrency(
+    currencyInput: CurrenciesInputType,
+  ): Promise<Currencies> {
+    const currencies = new Currencies();
+    currencies.currency = currencyInput.currency;
+    currencies.value = currencyInput.value;
+
+    try {
+      await validateOrReject(currencies);
+      await this.save(currencies);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+
+    return currencies;
   }
 
   async updateCurrency({
