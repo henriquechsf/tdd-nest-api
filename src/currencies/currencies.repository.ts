@@ -40,7 +40,20 @@ export class CurrenciesRepository extends Repository<Currencies> {
     currency,
     value,
   }: CurrenciesInputType): Promise<Currencies> {
-    return new Currencies();
+    const result = await this.findOneBy({ currency });
+
+    if (!result) {
+      throw new NotFoundException(`Currency: ${currency} not found!`);
+    }
+
+    try {
+      result.value = value;
+      await this.save(result);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+
+    return result;
   }
 
   async deleteCurrency(currency: string): Promise<void> {

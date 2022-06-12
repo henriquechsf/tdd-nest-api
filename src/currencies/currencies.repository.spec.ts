@@ -13,6 +13,7 @@ describe('CurrenciesRepository', () => {
     }).compile();
 
     repository = module.get<CurrenciesRepository>(CurrenciesRepository);
+    repository.save = jest.fn();
     mockData = { currency: 'USD', value: 1 } as Currencies;
   });
 
@@ -69,6 +70,48 @@ describe('CurrenciesRepository', () => {
 
     it('should be returns created data', async () => {
       expect(await repository.createCurrency(mockData)).toEqual(mockData);
+    });
+  });
+
+  describe('updateCurrency()', () => {
+    it('should be called findOneBy with correct params', async () => {
+      repository.findOneBy = jest.fn().mockReturnValue({});
+      await repository.updateCurrency(mockData);
+      expect(repository.findOneBy).toBeCalledWith({ currency: 'USD' });
+    });
+
+    it('should be throw findOneBy returns empty', async () => {
+      repository.findOneBy = jest.fn().mockReturnValue(undefined);
+      await expect(repository.updateCurrency(mockData)).rejects.toThrow(
+        new NotFoundException(`Currency: ${mockData.currency} not found!`),
+      );
+    });
+
+    it('should be called save with correct params', async () => {
+      repository.findOneBy = jest.fn().mockReturnValue(mockData);
+      repository.save = jest.fn().mockReturnValue(mockData);
+
+      await repository.updateCurrency(mockData);
+      expect(repository.save).toBeCalledWith(mockData);
+    });
+
+    it('should be throw when save throw', async () => {
+      repository.findOneBy = jest.fn().mockReturnValue(mockData);
+      repository.save = jest.fn().mockRejectedValue(new Error());
+      await expect(repository.updateCurrency(mockData)).rejects.toThrow();
+    });
+
+    it('should be returns updated data', async () => {
+      repository.findOneBy = jest
+        .fn()
+        .mockReturnValue({ currency: 'USD', value: 1 });
+      repository.save = jest.fn().mockReturnValue({});
+
+      const result = await repository.updateCurrency({
+        currency: 'USD',
+        value: 2,
+      });
+      expect(result).toEqual({ currency: 'USD', value: 2 });
     });
   });
 });
