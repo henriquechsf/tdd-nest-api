@@ -19,7 +19,7 @@ services:
         ipv4_address: 1.0.0.2
 
   mongo:
-    image: mongo:3.4
+    image: mongo:3.6
     container_name: mongodb
     restart: always
     volumes:
