@@ -5,7 +5,9 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
+  Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -28,6 +30,14 @@ export class CurrenciesController {
     @Body() createCurrencyDTO: CreateCurrencyDTO,
   ): Promise<Currencies> {
     return await this.currenciesService.createCurrency(createCurrencyDTO);
+  }
+
+  @Patch('/:currency/value')
+  async updateCurrency(
+    @Param('currency') currency: string,
+    @Body('value') value: number,
+  ): Promise<Currencies> {
+    return await this.currenciesService.updateCurrency({ currency, value });
   }
 
   @Delete('/:currency')
