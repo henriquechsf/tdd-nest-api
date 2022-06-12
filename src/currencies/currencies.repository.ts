@@ -5,7 +5,7 @@ import {
 import { validateOrReject } from 'class-validator';
 import { EntityRepository, Repository } from 'typeorm';
 import { Currencies } from './currencies.entity';
-import { CurrenciesInputType } from './types/currencies-input.type';
+import { CreateCurrencyDTO } from './dto/create-currency.dto';
 
 @EntityRepository(Currencies)
 export class CurrenciesRepository extends Repository<Currencies> {
@@ -19,9 +19,7 @@ export class CurrenciesRepository extends Repository<Currencies> {
     return result;
   }
 
-  async createCurrency(
-    currencyInput: CurrenciesInputType,
-  ): Promise<Currencies> {
+  async createCurrency(currencyInput: CreateCurrencyDTO): Promise<Currencies> {
     const currencies = new Currencies();
     currencies.currency = currencyInput.currency;
     currencies.value = currencyInput.value;
@@ -39,7 +37,7 @@ export class CurrenciesRepository extends Repository<Currencies> {
   async updateCurrency({
     currency,
     value,
-  }: CurrenciesInputType): Promise<Currencies> {
+  }: CreateCurrencyDTO): Promise<Currencies> {
     const result = await this.findOneBy({ currency });
 
     if (!result) {
