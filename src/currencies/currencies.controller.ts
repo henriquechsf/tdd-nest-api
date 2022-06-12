@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -27,5 +28,10 @@ export class CurrenciesController {
     @Body() createCurrencyDTO: CreateCurrencyDTO,
   ): Promise<Currencies> {
     return await this.currenciesService.createCurrency(createCurrencyDTO);
+  }
+
+  @Delete('/:currency')
+  async deleteCurrency(@Param() currency: string): Promise<void> {
+    return await this.currenciesService.deleteCurrency(currency);
   }
 }
