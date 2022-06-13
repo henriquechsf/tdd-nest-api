@@ -7,6 +7,7 @@ import { EntityRepository, Repository } from 'typeorm';
 import { Currencies } from './currencies.entity';
 import { CreateCurrencyDTO } from './dto/create-currency.dto';
 
+// TODO: custom repository not working in this version
 @EntityRepository(Currencies)
 export class CurrenciesRepository extends Repository<Currencies> {
   async getCurrency(currency: string): Promise<Currencies> {
